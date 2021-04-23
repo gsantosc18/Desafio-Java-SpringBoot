@@ -151,6 +151,45 @@ public class ProductRepositoryTest {
     }
     
     @Test
+    @DisplayName("Deve retornar o resultado da busca com parâmetro de preço máximo")
+    public void findProductBetweenPrice() {
+        SearchProduct searchProdct = SearchProduct.builder().min_price(20).max_price(30).build();
+        
+        Product product = 
+                Product
+                        .builder()
+                        .name("Book Test")
+                        .description("New Book Test")
+                        .price(39.9)
+                        .build();
+        Product product2 = 
+                Product
+                        .builder()
+                        .name("Book Test 2")
+                        .description("New Book Test2")
+                        .price(29.9)
+                        .build();
+        Product product3 = 
+                Product
+                        .builder()
+                        .name("Book Test 3")
+                        .description("New Book Test 3")
+                        .price(19.9)
+                        .build();
+        repository.save(product);
+        repository.save(product2);
+        repository.save(product3);
+        
+        List<Product> products = repository.search(searchProdct);
+        
+        assertThat(products).isInstanceOf(List.class);
+        assertThat(products.size()).isEqualTo(1);
+        assertThat(products.get(0).getName()).isEqualTo(product2.getName());
+        assertThat(products.get(0).getDescription()).isEqualTo(product2.getDescription());
+        assertThat(products.get(0).getPrice()).isEqualTo(product2.getPrice());
+    }
+    
+    @Test
     @DisplayName("Não deve retornar o resultado da busca com parâmetro")
     public void notFindProductWithQuery() {
         SearchProduct searchProdct = new SearchProduct();
