@@ -7,7 +7,6 @@ package com.compassouol.controller;
 
 import com.compassouol.dto.ProductDTO;
 import com.compassouol.entity.Product;
-import com.compassouol.exception.ProductInexistentException;
 import com.compassouol.model.SearchProduct;
 import com.compassouol.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -169,7 +168,7 @@ public class ProductControllerTest {
     public void shoulDoesNotUpdateInexistentProduct() throws Exception {
         String id = "1";        
         String json = new ObjectMapper().writeValueAsString(getProductDTO());        
-        BDDMockito.given(service.getById(Mockito.any(String.class))).willThrow(new ProductInexistentException("O produto não existe."));
+        BDDMockito.given(service.getById(Mockito.any(String.class))).willReturn(Optional.empty());
         
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .put(PRODUCT_API.concat("/"+id))
@@ -178,9 +177,7 @@ public class ProductControllerTest {
                 .content(json);
         
         mvc.perform(request)
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("status_code").isNotEmpty())
-                .andExpect(jsonPath("message").isNotEmpty());
+                .andExpect(status().isNotFound());
     }
     
     @Test

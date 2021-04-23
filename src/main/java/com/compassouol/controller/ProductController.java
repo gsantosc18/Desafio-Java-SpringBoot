@@ -2,7 +2,6 @@ package com.compassouol.controller;
 
 import com.compassouol.dto.ProductDTO;
 import com.compassouol.entity.Product;
-import com.compassouol.exception.ProductInexistentException;
 import com.compassouol.model.ApiError;
 import com.compassouol.model.SearchProduct;
 import com.compassouol.service.ProductService;
@@ -61,7 +60,7 @@ public class ProductController {
                     product = productService.update(product);
                     return modelMapper.map(product, ProductDTO.class);
                 })
-                .orElseThrow(() -> new ProductInexistentException("Não foi possível encontrar o produto."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
     
     @GetMapping("{id}")
@@ -108,16 +107,11 @@ public class ProductController {
         return new ResponseEntity<>(new ApiError(bindingResult), HttpStatus.BAD_REQUEST);
     }
     
-    @ExceptionHandler(ProductInexistentException.class)
-    public ResponseEntity<ApiError> handleProductInexistentExceptions(ProductInexistentException ex) {
-        return new ResponseEntity<>(new ApiError(ex), HttpStatus.NOT_FOUND);
-    }
-    
     @ExceptionHandler(BindException.class)
     public ResponseEntity<ApiError> handleBindException(BindException ex) {
         return new ResponseEntity<>(new ApiError(ex), HttpStatus.BAD_REQUEST);
     }
-    
+        
     private double toDouble(String value) {
         try {
             return Double.parseDouble(value);

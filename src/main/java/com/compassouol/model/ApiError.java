@@ -5,7 +5,6 @@
  */
 package com.compassouol.model;
 
-import com.compassouol.exception.ProductInexistentException;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.validation.BindingResult;
@@ -19,10 +18,6 @@ public class ApiError {
         StringBuilder strError = new StringBuilder();
         bindingResult.getAllErrors().forEach(error -> strError.append(error.getDefaultMessage()));
         settupApi(400,strError.toString());
-    }
-
-    public ApiError(ProductInexistentException ex) {
-        settupApi(400,ex.getMessage());
     }
     
     private void settupApi(int code, String message) {
